@@ -21,6 +21,9 @@ class PageController extends Controller{
 			case 'rand':
 				$this->PageRand();
 				break;
+			case 'res_notif':
+				$this->ResNotif();
+				break;
 			default:
 				$this->PageEnter();
 				break;
@@ -32,7 +35,7 @@ class PageController extends Controller{
 		if($_GET['number']){
 			$this->model->getResultExtrasense($this->model->secureAcces($_GET['number']), $_SESSION["dogat_extra_1"], $_SESSION["dogat_extra_2"]);
 			unset($_GET['number']);
-			redirect();
+			redirect('/res_notif');
 		}
 		
 		$this->model->getDostovernost();
@@ -42,6 +45,13 @@ class PageController extends Controller{
 		$_SESSION["dogat_extra_1"] = $this->ExtrasensNumberOne;
 		$_SESSION["dogat_extra_2"] = $this->ExtrasensNumberTwo;
 		//unset($_SESSION['array_result']);	
+		$this->showPage();
+	}
+	
+	public function ResNotif(){
+		$this->title = "Результат";
+		
+		$this->view = "res_notif";
 		$this->showPage();
 	}
 	
