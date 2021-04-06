@@ -14,5 +14,16 @@
 		return $params[0];
 	}
 	
+	function setError(){
+		$_SESSION["error"] = "error";
+	}
+	
+	function getError(){
+		if($_SESSION["error"]){
+			unset($_SESSION["error"]);
+			return true;
+		}
+	}
+	
 	
 ?>
