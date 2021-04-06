@@ -33,9 +33,15 @@ class PageController extends Controller{
 	public function PageRand(){
 		$this->title = 'Главная';
 		if($_GET['number']){
-			$this->model->getResultExtrasense($this->model->secureAcces($_GET['number']), $_SESSION["dogat_extra_1"], $_SESSION["dogat_extra_2"]);
-			unset($_GET['number']);
-			redirect('/res_notif');
+			if($this->model->validateNumber($_GET['number'])){
+				$this->model->getResultExtrasense($this->model->secureAcces($_GET['number']), $_SESSION["dogat_extra_1"], $_SESSION["dogat_extra_2"]);
+				unset($_GET['number']);
+				redirect('/res_notif');
+			}else{
+				setError();
+				redirect();
+			}
+			
 		}
 		
 		$this->model->getDostovernost();
