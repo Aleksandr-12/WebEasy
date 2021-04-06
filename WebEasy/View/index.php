@@ -37,10 +37,15 @@
   
 	<div>Экстрасенс 1: <?php echo $_SESSION["dogat_extra_1"]?></div>
 	<div> Экстрасенс 2:  <?php echo $_SESSION["dogat_extra_2"]?></div>
-
+	
+	<?php if(getError()):?>
+	<div class="alert alert-danger" role="alert">
+		Вы ввели не двухзначное число или строку
+	</div>
+	<?php endif;?>
  	  <form action="/rand"  method="get">
   		  <div class="form-group">
-			<label for="exampleInputName">Введите число</label>
+			<label for="exampleInputName">Введите двухзначное число</label>
 			<input name="number" type="number" class="form-control"  placeholder="Введите число" required>
 		 </div>
         <button type="submit" class="btn btn-primary">Отправить</button>
