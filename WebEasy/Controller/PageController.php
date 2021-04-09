@@ -1,17 +1,27 @@
 <?php
 require_once "./functions.php";
-require_once "./Model/model_class.php";
+require_once "./Model/extrasenceOneModel.php";
+require_once "./Model/extrasenceTwoModel.php";
+require_once "./Model/model.php";
 require_once "Controller.php";
 
 class PageController extends Controller{
 	
-	public $model = '';
-	public $ExtrasensNumberOne = '';
-	public $ExtrasensNumberTwo = '';
+	public $data;
+	public $extrasenceOneModel;
+	public $extrasenceTwoModel;
+	public $user;
+	public $historyExtrasenceOne;
+	public $historyExtrasenceTwo;
+	public $resultExtrasenceOne;
+	public $resultExtrasenceTwo;
+	public $extrasenceNumberOne;
+	public $extrasenceNumberTwo;
 	
 	public function __construct($pageName = '') {
 		session_start();
-		$this->model = new model_class();
+		$this->extrasenceOneModel = new extrasenceOneModel();
+		$this->extrasenceTwoModel = new extrasenceTwoModel();
 		$this->createPage($pageName);
 	}
 
@@ -19,49 +29,70 @@ class PageController extends Controller{
 		
 		switch($pageName){
 			case 'rand':
-				$this->PageRand();
+				$this->pageRand();
 				break;
-			case 'res_notif':
-				$this->ResNotif();
+			case 'result':
+				$this->pageResult();
 				break;
 			default:
-				$this->PageEnter();
+				$this->pageEnter();
 				break;
 		}
 	}
 	
-	public function PageRand(){
+	public function pageRand(){
+		$this->data = array();
 		$this->title = 'Главная';
 		if($_GET['number']){
-			if($this->model->validateNumber($_GET['number'])){
-				$this->model->getResultExtrasense($this->model->secureAcces($_GET['number']), $_SESSION["dogat_extra_1"], $_SESSION["dogat_extra_2"]);
+			if($this->extrasenceOneModel->validateNumber($_GET['number'])){
+				$this->extrasenceOneModel->getResultExtrasenseOne($this->extrasenceOneModel->secureAcces($_GET['number']));
+				$this->extrasenceTwoModel->getResultExtrasenseTwo($this->extrasenceOneModel->secureAcces($_GET['number']));
+				$this->extrasenceOneModel->getHistoryNumber($this->extrasenceOneModel->secureAcces($_GET['number']));
 				unset($_GET['number']);
-				redirect('/res_notif');
+				redirect('/result');
 			}else{
 				setError();
 				redirect();
 			}
-			
 		}
 		
-		$this->model->getDostovernost();
+		$this->extrasenceOneModel->getReliability();
 		
-		$this->ExtrasensNumberOne = $this->model->getExtrasensNumberOne();
-		$this->ExtrasensNumberTwo = $this->model->getExtrasensNumberTwo();
-		$_SESSION["dogat_extra_1"] = $this->ExtrasensNumberOne;
-		$_SESSION["dogat_extra_2"] = $this->ExtrasensNumberTwo;
+		if(!$_SESSION['reliabilityExtrasenceOne'] OR !$_SESSION['reliabilityExtrasenceTwo']){
+			$_SESSION['reliabilityExtrasenceOne'] = $this->extrasenceOneModel->getExtrasenceNumberOne();
+			$_SESSION['reliabilityExtrasenceTwo'] = $this->extrasenceTwoModel->getExtrasenceNumberTwo();
+		}
+		
+		$this->extrasenceNumberOne = $_SESSION['reliabilityExtrasenceOne'];
+		$this->extrasenceNumberTwo = $_SESSION['reliabilityExtrasenceTwo'];
+		
+		
+		$this->dataExtrasenceOne = $_SESSION['arrayResultExtrasenceOne'];
+		$this->dataExtrasenceTwo = $_SESSION['arrayResultExtrasenceTwo'];
+		$this->user = $_SESSION['user'];
+		$this->getHistoryNumber = $_SESSION['arrayResultNumber'];
+		if(isset($_SESSION["historyExtrasenceOne"])){
+			$this->historyExtrasenceOne = $_SESSION["historyExtrasenceOne"];
+		}
+		if(isset($_SESSION["historyExtrasenceTwo"])){
+			$this->historyExtrasenceTwo = $_SESSION["historyExtrasenceTwo"];
+		}
+		
+		$this->data = $this->extrasenceOneModel->getArray($this->getHistoryNumber,$this->dataExtrasenceOne,$this->dataExtrasenceTwo);
+	
 		//unset($_SESSION['array_result']);	
 		$this->showPage();
 	}
 	
-	public function ResNotif(){
+	public function pageResult(){
 		$this->title = "Результат";
-		
-		$this->view = "res_notif";
+		$this->resultExtrasenceOne = $_SESSION['resultExtrasenceOne'];
+		$this->resultExtrasenceTwo = $_SESSION['resultExtrasenceTwo'];
+		$this->view = "result";
 		$this->showPage();
 	}
 	
-	public function PageEnter(){
+	public function pageEnter(){
 		$this->title = "Загадай число";
 		if(!$_SESSION['user']){
 			$_SESSION['user'] = $this->model->getUserRand();
