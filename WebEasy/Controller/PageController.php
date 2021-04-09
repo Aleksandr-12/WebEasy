@@ -95,7 +95,7 @@ class PageController extends Controller{
 	public function pageEnter(){
 		$this->title = "Загадай число";
 		if(!$_SESSION['user']){
-			$_SESSION['user'] = $this->model->getUserRand();
+			$_SESSION['user'] = $this->extrasenceOneModel->getUserRand();
 		}
 		$this->view = "enter";
 		$this->showPage();
