@@ -1,15 +1,15 @@
 <div class="jumbotron jumbotron-fluid">
   <div class="container">
-		<div> Пользователь: <?php echo $_SESSION['user']?></div>
+		<div> Пользователь: <?php echo $this->user;?></div>
 		<div>История доверности Экстрасенс 1:  
-		<?php if($_SESSION["history_extra_1"]):
-			echo $_SESSION["history_extra_1"];
-			else: echo 0;
+		<?php if(isset($this->historyExtrasenceOne)):
+			echo $this->historyExtrasenceOne;
+			else: echo '0';
 			endif;?>%</div>
 		<div>История доверности Экстрасенс 2:  
-		<?php if($_SESSION["history_extra_2"]):
-			echo $_SESSION["history_extra_2"];
-			else: echo 0;
+		<?php if(!isset($this->historyExtrasenceTwo) AND !$this->historyExtrasenceTwo = ""):
+			echo  '0';
+			else: echo $this->historyExtrasenceTwo;
 			endif;?>%</div>
 	    <table class="table table-striped">
 	  <thead>
@@ -19,12 +19,12 @@
 		  <th scope="col">Введенные числа пользователем</th>
 		</tr>
 	  </thead>
-  <?php if($_SESSION['array_result']):?>
+  <?php if($this->data):?>
 	  <tbody>
-	  <?php foreach($_SESSION['array_result'] as $value){?>
+	  <?php foreach($this->data as $value){?>
 		<tr>
-		   <td><?php echo $value['dogatka_extra_1']; ?></td>
-		  <td><?php echo $value['dogatka_extra_2']; ?></td>
+		   <td><?php echo $value['reliabilityExtrasenceOne']; ?></td>
+		  <td><?php echo $value['reliabilityExtrasenceTwo']; ?></td>
 		  <td><?php echo $value['number']; ?></td>
 		  </tr>
 	  <?php }?>
@@ -35,8 +35,8 @@
 </table>
  <h3>Догадки экстрасенсов:</h3>
   
-	<div>Экстрасенс 1: <?php echo $_SESSION["dogat_extra_1"]?></div>
-	<div> Экстрасенс 2:  <?php echo $_SESSION["dogat_extra_2"]?></div>
+	<div>Экстрасенс 1: <?php echo $this->extrasenceNumberOne;?></div>
+	<div> Экстрасенс 2:  <?php echo $this->extrasenceNumberTwo;?></div>
 	
 	<?php if(getError()):?>
 	<div class="alert alert-danger" role="alert">
