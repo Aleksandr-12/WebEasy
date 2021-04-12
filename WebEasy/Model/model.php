@@ -23,27 +23,7 @@ class model{
 			
 		}
 		return $data;
-	}
-		
-	public function getReliability(){
-		$count = count($_SESSION['arrayResultNumber']);
-		if(isset($_SESSION['countTrueExtrasenceOne']) AND isset($_SESSION['arrayResultNumber'])){
-			$_SESSION["historyExtrasenceOne"] =  $_SESSION['countTrueExtrasenceOne'] / $count * 100;
-		}
-		if(isset($_SESSION['countTrueExtrasenceTwo']) AND isset($_SESSION['arrayResultNumber'])){
-			$_SESSION["historyExtrasenceTwo"] = $_SESSION['countTrueExtrasenceTwo'] / $count * 100;
-		}
-	}
-	
-	public function  getHistoryNumber($number){
-		$arrayResultNumber = array();
-		if($_SESSION['arrayResultNumber']){
-			$arrayResultNumber = $_SESSION['arrayResultNumber'];
-		}
-		array_push($arrayResultNumber,array('number' => $number));
-		$_SESSION['arrayResultNumber'] = $arrayResultNumber;
-	}
-	
+	}	
 	
 	public function validateNumber($n){
 		if(!is_numeric($n)){
@@ -55,6 +35,20 @@ class model{
 			return false;
 		}
 	}
+	public function setUser(){
+		if(!$_SESSION['user']){
+			$_SESSION['user'] = $this->getUserRand();
+		}
+	}
+	
+	public function getUser(){
+		return $_SESSION['user'];
+	}
+	
+	public function getRandomExtrasence(){
+		return rand(10,99);
+	}
+	
 }
 
 
