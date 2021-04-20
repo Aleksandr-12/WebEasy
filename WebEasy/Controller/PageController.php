@@ -9,15 +9,16 @@ class PageController extends Controller{
 	public $data;
 	public $extrasenceModel;
 	public $user;
-	public $historyExtrasenceOne;
-	public $historyExtrasenceTwo;
-	public $resultExtrasenceOne;
-	public $resultExtrasenceTwo;
-	public $extrasenceNumberOne;
-	public $extrasenceNumberTwo;
+	public $resultExtrasence = array();
+	public $historyArrayExtrasence = array();
+	public $answerExtrasenceArray = array();
+	public $dataExtrasence = array();
+	public $getGeneralArrayExtrasences = array();
 	
-	public $error = false;
+	public $dataArray = array();
+	public $dataNumberArray = array();
 	
+	public $htmlExtrasence;	
 	public function __construct($pageName = '') {
 		session_start();
 		$this->extrasenceModel = new extrasenceModel();
@@ -53,36 +54,29 @@ class PageController extends Controller{
 				redirect();
 			}
 		}
-		
 		$this->extrasenceModel->getReliability();
-		$this->extrasenceNumberOne = $this->extrasenceModel->getReliabilityExtrasenceOne();
-		$this->extrasenceNumberTwo = $this->extrasenceModel->getReliabilityExtrasenceTwo();
+		$this->answerExtrasenceArray = $this->extrasenceModel->getGeneralanswerCountExtrasences();
 			
-		$this->dataExtrasenceOne = $this->extrasenceModel->getArrayResultExtrasenceOne();
-		$this->dataExtrasenceTwo = $this->extrasenceModel->getArrayResultExtrasenceTwo();
 		$this->user = $this->extrasenceModel->getUser();
 		$this->historyNumber = $this->extrasenceModel->getHistoryNumber();
 		
-		$this->historyExtrasenceOne = $this->extrasenceModel->getHistoryExtrasenceOne();
-		$this->historyExtrasenceTwo = $this->extrasenceModel->getHistoryExtrasenceTwo();
+		$this->historyArrayExtrasence = $this->extrasenceModel->getGeneralHistoryExtrasences();
 		
-		
-		$this->data = $this->extrasenceModel->getArray($this->historyNumber,$this->dataExtrasenceOne,$this->dataExtrasenceTwo);
-	
-		//unset($_SESSION['array_result']);	
+		$this->htmlExtrasence = $this->extrasenceModel->getExtrasenceHtml();
+		//unset($_SESSION);	
 		$this->showPage();
 	}
 	
 	public function pageResult(){
 		$this->title = "Результат";
-		$this->resultExtrasenceOne = $this->extrasenceModel->getResultExtrasenceForViewOne();;
-		$this->resultExtrasenceTwo = $this->extrasenceModel->getResultExtrasenceForViewTwo();;
+		$this->resultExtrasence = $this->extrasenceModel->getGeneralResultExtrasence();
 		$this->view = "result";
 		$this->showPage();
 	}
 	
 	public function pageEnter(){
 		$this->title = "Загадай число";
+		//unset($_SESSION);
 		if(!$this->extrasenceModel->getUser()){
 			$this->extrasenceModel->setUser();
 		}
