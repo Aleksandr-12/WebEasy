@@ -3,60 +3,104 @@ require_once "model.php";
 
 class extrasenceModel extends model{
 	
-	public $nameExtrasenceOne = 'reliabilityExtrasenceOne';
-	public $nameExtrasenceTwo = 'reliabilityExtrasenceTwo';
+	public $countExtrasences = 7;
 	
-	public $nameExtrasenceArrayOne = 'arrayResultExtrasenceOne';
-	public $nameExtrasenceArrayTwo = 'arrayResultExtrasenceTwo';
+	public $superArray = array();
 	
-	public $reliabilityExtrasenceOne;
-	public $reliabilityExtrasenceTwo;
+	public $nameArrayExtrasences = 'nameArrayExtrasences';
+	public $nameArrayNameExtrasences = 'nameArrayNameExtrasences';
+	public $nameResultExtrasences = 'nameResultExtrasence';
+	public $nameCountTrueExtrasences = 'nameCountTrueExtrasence';
+	public $nameAnswerCountExtrasences = 'nameAnswerCountExtrasences';
 	
-	public $resultExtrasenceOne = 'resultExtrasenceOne';
-	public $resultExtrasenceTwo = 'resultExtrasenceTwo';
+	public $generalArrayExtrasences = array();
+	public $generalArrayNameExtrasences = array();
+	public $generalResultExtrasences = array();
+	public $generalCountTrueExtrasences = array();
 	
-	public $countTrueExtrasenceOne = 'countTrueExtrasenceOne';
-	public $countTrueExtrasenceTwo = 'countTrueExtrasenceTwo';
+	public $generalAnswerCountExtrasences = array();
 	
-	public $arrayResultExtrasenceOne = array();
-	public $arrayResultExtrasenceTwo = array();
+	public $generalHistoryExtrasences = array();
 	
-	public $historyExtrasenceOne;
-	public $historyExtrasenceTwo;
 	
-	public $historyNumber;
+	public $historyNumber = array();
 			
 	
 	public function __construct() {
-		if(!$_SESSION['reliabilityExtrasenceOne']){
-			$_SESSION['reliabilityExtrasenceOne'] = $this->getRandomExtrasence();
+		$this->superArray = $_SESSION;
+		$count = count($this->superArray['allArray']);
+		if(empty($_SESSION['allArray']) or ($count <> $this->countExtrasences)){
+			unset($_SESSION['allArray']);
+			unset($_SESSION['arrayResultNumber']);
+			unset($_SESSION[$this->nameArrayExtrasences]);
+			unset($_SESSION[$this->nameArrayNameExtrasences]);
+			unset($_SESSION[$this->nameResultExtrasences]);
+			unset($_SESSION[$this->nameCountTrueExtrasences]);
+			unset($_SESSION[$this->nameAnswerCountExtrasences]);
+								
+			$this->allGenerate();
 		}
-		$this->reliabilityExtrasenceOne = $_SESSION[$this->nameExtrasenceOne];
-		if(!$_SESSION['reliabilityExtrasenceTwo']){
-			$_SESSION['reliabilityExtrasenceTwo'] = $this->getRandomExtrasence();
-		}
-		$this->reliabilityExtrasenceTwo = $_SESSION[$this->nameExtrasenceTwo];
-				
-		$this->arrayResultExtrasenceOne = $_SESSION[$this->nameExtrasenceArrayOne];
-		$this->arrayResultExtrasenceTwo = $_SESSION[$this->nameExtrasenceArrayTwo];
+		$this->generalArrayExtrasences = $_SESSION[$this->nameArrayExtrasences];
+		$this->generalArrayNameExtrasences = $_SESSION[$this->nameArrayNameExtrasences];
+		$this->generalResultExtrasences = $_SESSION[$this->nameResultExtrasences];
+		$this->generalCountTrueExtrasences = $_SESSION[$this->nameCountTrueExtrasences];
+		$this->generalAnswerCountExtrasences = $_SESSION[$this->nameAnswerCountExtrasences];
 		
-		if(isset($_SESSION["historyExtrasenceOne"])){
-			$this->historyExtrasenceOne = $_SESSION["historyExtrasenceOne"];
-		}
-		if(isset($_SESSION["historyExtrasenceTwo"])){
-			$this->historyExtrasenceTwo = $_SESSION["historyExtrasenceTwo"];
-		}
-		
-		$this->historyNumber = $_SESSION['arrayResultNumber'];
 				
+		//	var_dump($count);	
+		$this->historyNumber = $this->superArray['arrayResultNumber'];
+	}
+	
+	public function allGenerate(){
+		$array = array();
+		for($i = 0;$i < $this->countExtrasences; $i++){
+			$nameExtrasence = $this->generateString('name');
+			$_SESSION['allArray'][$i] = $this->generateString('array');
+			$_SESSION['allName'][$i] = $nameExtrasence;
+			$_SESSION['allResult'][$i] = $this->generateString('result');
+			$_SESSION['allCount'][$i] = $this->generateString('count');
+			$_SESSION[$nameExtrasence] = $this->getRandomExtrasence();
+			$array[$i] = $_SESSION[$nameExtrasence];
+		}
+		$_SESSION[$this->nameAnswerCountExtrasences] = $array;
+		$this->generalAnswerCountExtrasences = $_SESSION[$this->nameAnswerCountExtrasences];
 	}
 	
 	public function getResultExtrasenses($number){
-		$this->getExtrasences($this->nameExtrasenceArrayOne,$this->nameExtrasenceOne,$number);
-		$this->operationSessionExtrasences($number,$this->resultExtrasenceOne,$this->countTrueExtrasenceOne,$this->nameExtrasenceOne);
+		$arrayExtrasences = array();
+		$arrayNameExtrasences = array();
+		$resultExtrasence = array();
+		$countTrueExtrasence = array();
+		$answerExtrasence = array();
+		for($i = 0;$i < $this->countExtrasences; $i++){
+			$arrayExtrasences[$i] = $_SESSION['allArray'][$i];
+			
+			$arrayNameExtrasences[$i] = $_SESSION['allName'][$i];
+	
+			$resultExtrasence[$i] = $_SESSION['allResult'][$i];
+			
+			$countTrueExtrasence[$i] = $_SESSION['allCount'][$i];
+			 
+			$this->getExtrasences($arrayExtrasences[$i],$arrayNameExtrasences[$i],$number);
+			$this->operationSessionExtrasences($number,$resultExtrasence[$i],$countTrueExtrasence[$i],$arrayNameExtrasences[$i]);
+			
+			$answerExtrasence[$arrayNameExtrasences[$i]] = $this->getRandomExtrasence();
+			$_SESSION[$arrayNameExtrasences[$i]] = $answerExtrasence[$arrayNameExtrasences[$i]];
+		}
+		$_SESSION[$this->nameArrayExtrasences] = $arrayExtrasences;
+		$_SESSION[$this->nameArrayNameExtrasences] = $arrayNameExtrasences;
+		$_SESSION[$this->nameResultExtrasences] = $resultExtrasence;
+		$_SESSION[$this->nameCountTrueExtrasences] = $countTrueExtrasence;
 		
-		$this->getExtrasences($this->nameExtrasenceArrayTwo,$this->nameExtrasenceTwo,$number);
-		$this->operationSessionExtrasences($number,$this->resultExtrasenceTwo,$this->countTrueExtrasenceTwo,$this->nameExtrasenceTwo);
+		$_SESSION[$this->nameAnswerCountExtrasences] = $answerExtrasence;
+		
+		$this->generalArrayExtrasences = $_SESSION[$this->nameArrayExtrasences];
+		$this->generalArrayNameExtrasences = $_SESSION[$this->nameArrayNameExtrasences];
+		$this->generalResultExtrasences = $_SESSION[$this->nameResultExtrasences];
+		$this->generalCountTrueExtrasences = $_SESSION[$this->nameCountTrueExtrasences];
+				
+		$this->generalAnswerCountExtrasences = $_SESSION[$this->nameAnswerCountExtrasences];
+	
 	}
 	
 		
@@ -72,7 +116,6 @@ class extrasenceModel extends model{
 	public function operationSessionExtrasences($number,$resultExtrasence,$countTrueExtransence,$extrasence){
 		
 		$number = (int)$number;
-		
 		if($number == $_SESSION[$extrasence]){
 			
 			if($_SESSION[$resultExtrasence]){
@@ -92,16 +135,21 @@ class extrasenceModel extends model{
 			$_SESSION[$resultExtrasence] = 'не угадал';
 		}
 		
-		$_SESSION[$extrasence] = $this->getRandomExtrasence();
+		
 	}
 	
 	public function getReliability(){
 		$count = count($_SESSION['arrayResultNumber']);
-		if(isset($_SESSION['countTrueExtrasenceOne']) AND isset($_SESSION['arrayResultNumber'])){
-			$this->historyExtrasenceOne =  $_SESSION['countTrueExtrasenceOne'] / $count * 100;
-		}
-		if(isset($_SESSION['countTrueExtrasenceTwo']) AND isset($_SESSION['arrayResultNumber'])){
-			$this->historyExtrasenceTwo = $_SESSION['countTrueExtrasenceTwo'] / $count * 100;
+	
+		if(count($this->generalCountTrueExtrasences) AND isset($_SESSION['arrayResultNumber'])){
+			for($i = 0; $i < count($this->generalCountTrueExtrasences);$i++){
+				$countTrue = (int)$_SESSION[$this->generalCountTrueExtrasences[$i]];
+				$this->generalHistoryExtrasences[$i] = $countTrue / $count * 100;
+			}
+		}else{
+			for($i = 0; $i < $this->countExtrasences;$i++){
+				$this->generalHistoryExtrasences[$i] = 0;
+			}
 		}
 	}
 	
@@ -114,37 +162,68 @@ class extrasenceModel extends model{
 		$_SESSION['arrayResultNumber'] = $arrayResultNumber;
 	}
 	
-	public function getResultExtrasenceForViewOne(){
-		return $_SESSION['resultExtrasenceOne'];
-	}
-	
-	public function getResultExtrasenceForViewTwo(){
-		return  $_SESSION['resultExtrasenceTwo'];
+	public function getExtrasenceHtml(){
+		   $str.= "<div>";
+			  for($i = 0;$i < count($this->generalAnswerCountExtrasences);$i++){
+				$str.= "<div>";
+				$n = $i+1;
+					$str.= "<h3 class='headerBorder'> Экстрасенс ".$n."</h3>";
+				$str.= "</div>";
+				$str.= "<div class='flexBox'>";
+				if(count($_SESSION[$this->generalArrayExtrasences[$i]]) > 0){
+						for($j = 0;$j < count($this->superArray[$this->generalArrayExtrasences[$i]]);$j++){
+						$s = $j+1;
+						$str.= "<div><span>".$s."</span>".$this->superArray[$this->generalArrayExtrasences[$i]][$j][$this->generalArrayNameExtrasences[$i]]."</div>";
+					}
+				}
+				
+				$str.= "</div>";
+			  }
+			$str.= "</div>";
+		return $str;
 	}	
-	
-	public function getReliabilityExtrasenceOne(){
-		return $this->reliabilityExtrasenceOne;
+
+	public function generateString($char) {
+		$strength = 10;
+		$input = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$inputLength = strlen($input);
+		$randomString = '';
+		for($i = 0; $i < $strength; $i++) {
+			$randomCharacter = $input[mt_rand(0, $inputLength - 1)];
+			$randomString .= $randomCharacter;
+		}
+	 
+		return $char.$randomString;
 	}
 	
-	public function getReliabilityExtrasenceTwo(){
-		return $this->reliabilityExtrasenceTwo;
+	public function getGeneralHistoryExtrasences(){
+		return $this->generalHistoryExtrasences;
+	}
+		
+	public function getGeneralArrayExtrasences(){
+		return $this->generalArrayExtrasences;
+	}
+	
+	public function getGeneralanswerCountExtrasences(){
+		return $this->generalAnswerCountExtrasences;
+	}
+	
+	public function getGeneralArrayNameExtrasences(){
+		return $this->generalArrayNameExtrasences;
 	}
 	
 	
-	public function getArrayResultExtrasenceOne(){
-		return $this->arrayResultExtrasenceOne;
+	public function getGeneralResultExtrasence(){
+		$array = array();
+		for($i = 0; $i < count($this->generalResultExtrasences);$i++){
+			$array[$i] = $_SESSION[$this->generalResultExtrasences[$i]];
+		}
+		return $array;
+		
 	}
 	
-	public function getArrayResultExtrasenceTwo(){
-		return $this->arrayResultExtrasenceTwo;
-	}
-	
-	public function getHistoryExtrasenceOne(){
-		return $this->historyExtrasenceOne;
-	}
-	
-	public function getHistoryExtrasenceTwo(){
-		return $this->historyExtrasenceTwo;
+	public function getGeneralCountTrueExtrasences(){
+		return $this->generalCountTrueExtrasences;
 	}
 	
 	public function getHistoryNumber(){

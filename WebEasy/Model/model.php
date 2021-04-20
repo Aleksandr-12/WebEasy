@@ -12,19 +12,6 @@ class model{
 		return rand();
 	}
 	
-	public function getArray($getHistoryNumber,$dataExtrasenceOne,$dataExtrasenceTwo){
-		$data = array();
-		for($i = 0;$i<count($getHistoryNumber);$i++){
-			$array = array();
-			$array['reliabilityExtrasenceOne'] = $dataExtrasenceOne[$i]['reliabilityExtrasenceOne'];
-			$array['reliabilityExtrasenceTwo'] = $dataExtrasenceTwo[$i]['reliabilityExtrasenceTwo'];
-			$array['number'] = $getHistoryNumber[$i]['number'];
-			$data[$i] = $array;
-			
-		}
-		return $data;
-	}	
-	
 	public function validateNumber($n){
 		if(!is_numeric($n)){
 			return false;
